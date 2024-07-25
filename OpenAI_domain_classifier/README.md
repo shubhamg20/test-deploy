@@ -28,7 +28,11 @@ print(completion.choices[0].message)
    $ cd OpenAI_domain_classifier
 
    ```
+<<<<<<< HEAD
 4. create .env file and copy the content of .env-example file there. Then, place your API_KEY as stated.
+=======
+4. create a new .env file and copy the content of .env-example file in it. Finally, place your api_key as mentioned there.
+>>>>>>> 03a18d29e977f7054986e743c6af0ce898a91337
 5. Create a new virtual environment:
 
    - macOS:
