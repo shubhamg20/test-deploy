@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sentiment Analyzer</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 5px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    #sentiment-form {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+
+    #text-input {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      font-size: 16px;
+      resize: vertical;
+      margin-bottom: 10px;
+    }
+
+    #sentiment-form button {
+      background-color: #4CAF50; /* Green */
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    #sentiment-form button:hover {
+      background-color: #3e8e41; /* Green hover */
+    }
+
+    #sentiment-list {
+      margin-top: 10px;
+    }
+
+    #sentiment-list h3 {
+      margin-bottom: 5px;
+    }
+
+    .positive {
+      color: green;
+    }
+
+    .negative {
+      color: red;
+    }
+
+    .neutral {
+      color: gray;
+    }
+
+    /* Optional: Add styles for different sentiment classes 
+       (positive, negative, neutral) here */
+  </style>
+  <link rel="stylesheet" href="main.css">  </head>
+<body>
+  <div class="container">
+    <h1>Enter your text:</h1>
+    <form id="sentiment-form">
+      <textarea name="text" id="text-input" rows="5" required></textarea>
+      <button type="submit">Analyze Sentiment</button>
+    </form>
+    <div id="sentiment-list"></div>
+  </div>
+
+  <script>
+    const sentimentForm = document.getElementById("sentiment-form");
+    const sentimentList = document.getElementById("sentiment-list");
+  
+    sentimentForm.addEventListener("submit", function(event) {
+      event.preventDefault();
+  
+      const textInput = document.getElementById("text-input");
+      const text = textInput.value;
+  
+      // Send AJAX request to analyze sentiment
+      fetch("/analyze_sentiment", {
+        method: "POST",
+        body: JSON.stringify({ text }),
+        headers: { "Content-Type": "application/json" }
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data.sentiment)
+        sentimentList.innerHTML = ""; // Clear previous results
+  
+        if (data.success) {
+          sentimentList.innerHTML = "<h3>Detected Sentiment:</h3>";
+          
+          const sentiments = data.sentiment;
+          if (sentiments.length === 1) {
+            const listItem = document.createElement("li");
+            listItem.classList.add(sentiments[0]); // Add class for color coding (optional)
+            listItem.textContent = sentiments[0];
+            sentimentList.appendChild(listItem);
+          } else {
+            const list = document.createElement("ul");
+            sentiments.forEach(sentiment => {
+              const listItem = document.createElement("li");
+              listItem.classList.add(sentiment); // Add class for color coding (optional)
+              listItem.textContent = sentiment;
+              list.appendChild(listItem);
+            });
+            sentimentList.appendChild(list);
+          }
+        } else {
+          sentimentList.innerHTML = "Error analyzing sentiment.";
+        }
+  
+       // textInput.value = ""; // Clear input field for next analysis
+      })
+      .catch(error => {
+        console.error("Error:", error);
+        sentimentList.innerHTML = "An error occurred. Please try again.";
+      });
+    });
+  </script>
+  
+</body>
+</html>
